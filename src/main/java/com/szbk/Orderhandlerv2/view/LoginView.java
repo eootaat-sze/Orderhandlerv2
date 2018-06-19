@@ -11,7 +11,6 @@ import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
-import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.Position;
 import com.vaadin.spring.annotation.SpringComponent;
@@ -41,7 +40,6 @@ public class LoginView extends VerticalLayout implements View {
     private Binder<User> dataBinder;
 
     private static String REQUIRED_FIELD = "A mező kitöltése kötelező!";
-//    public static String VIEW_NAME = "";
 
     public LoginView() {}
 
@@ -73,11 +71,12 @@ public class LoginView extends VerticalLayout implements View {
         setSizeFull();
 
         //Displays a notification with some information, but I didn't work it out properly.
-//        popupInformation.setStyleName(ValoTheme.NOTIFICATION_TRAY);
-//        popupInformation.setDescription("Ez itt a főoldal. Itt tudsz belépni vagy regisztrálni.");
-//        popupInformation.setPosition(Position.TOP_RIGHT);
-//        popupInformation.setIcon(VaadinIcons.INFO);
-//        popupInformation.show(UI.getCurrent().getPage());
+    //    popupInformation.setStyleName(ValoTheme.NOTIFICATION_CLOSABLE);
+    //    popupInformation.setDescription("Ez itt a főoldal. Itt tudsz belépni vagy regisztrálni.");
+    //    popupInformation.setDelayMsec(-1);
+    //    popupInformation.setPosition(Position.TOP_RIGHT);
+    //    popupInformation.setIcon(VaadinIcons.INFO);
+    //    popupInformation.show(UI.getCurrent().getPage());
 
         //Email field settings
         emailField.setPlaceholder("Email cím");
@@ -103,13 +102,15 @@ public class LoginView extends VerticalLayout implements View {
         loginBtn.setClickShortcut(ShortcutAction.KeyCode.ENTER);
         loginBtn.addClickListener(e -> {
             validateAndLoginUser();
+            // getUI().getNavigator().navigateTo("laboruser");
         });
 
         //Registration button settings
         registrationBtn.addClickListener(e -> {
             //Navigate to the registration view, or open registration window. It depends on... idk.
 //            showRegistrationWindow();
-            getUI().getNavigator().navigateTo("registration");
+            // getUI().getNavigator().navigateTo("registration");
+            getUI().getNavigator().navigateTo("laboruser");
         });
 
         loginLayout.addComponents(emailField, passwordField, loginBtn);
@@ -148,6 +149,7 @@ public class LoginView extends VerticalLayout implements View {
                 VaadinSession.getCurrent().setAttribute("email", laboruserToLogin.getEmail());
                 VaadinSession.getCurrent().setAttribute("role", "laboruser");
 //                VaadinSession.getCurrent().setAttribute("id", lb.getId());
+                getUI().getNavigator().navigateTo("laboruser");
             } else {
                 Customer customerToLogin = customerController.login(loginUser.getEmail(), loginUser.getPassword());
                 if (customerToLogin != null) {

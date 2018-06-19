@@ -2,7 +2,6 @@ package com.szbk.Orderhandlerv2.model;
 
 import com.szbk.Orderhandlerv2.model.Entity.CustomerOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -12,6 +11,8 @@ public interface CustomerOrderRepository extends JpaRepository<CustomerOrder, Lo
     List<CustomerOrder> findCustomerOrderByCustomerId(long customerID);
 
     List<CustomerOrder> findCustomerOrderByCustomerIdAndStatusEquals(long customerId, String status);
+
+    List<CustomerOrder> findCustomerOrdersByStatus(String status);
 
     //These are for the step-by-step filtering in the reportpage.
 //    @Query("select distinct companyName from CustomerOrder")

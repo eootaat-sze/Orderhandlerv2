@@ -20,6 +20,10 @@ public class PurificationController {
         return repo.count() > count;
     }
 
+    public List<String> getPurificationNames() {
+        return repo.getPurificationNames();
+    }
+
     public List<String> getPurificationNamesAndPricesAsStrings() {
         List<Purification> purificationList = repo.findAll();
         List<String> namesAndPrices = new ArrayList<>();

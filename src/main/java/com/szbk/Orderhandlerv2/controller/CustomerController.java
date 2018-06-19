@@ -4,6 +4,7 @@ import com.szbk.Orderhandlerv2.model.CustomerRepository;
 import com.szbk.Orderhandlerv2.model.Entity.Customer;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -12,6 +13,51 @@ public class CustomerController {
 
     public CustomerController(CustomerRepository repo) {
         this.repo = repo;
+    }
+
+    public Customer getCustomerByEmail(String emailAddress) {
+        return repo.findCustomerByEmail(emailAddress);
+    }
+
+    public Customer getCustomerById(long id) {
+        return repo.getOne(id);
+    }
+
+    public List<Customer> getCustomersByIds(ArrayList<Long> ids) {
+        return repo.findAllById(ids);
+    }
+
+    public Customer getCustomerByCompanyNameAndGroupNameAndCustomerName(String companyName, String groupName, String customerName) {
+        return repo.findCustomerByCompanyNameAndGroupNameAndCustomerName(companyName, groupName, customerName);
+    }
+
+    public List<String> getCompanyNames() {
+        return repo.getCompanyNames();
+    }
+
+    public List<String> getGroupNamesByCompanyName(String companyName) {
+        return repo.getGroupNamesByCompanyName(companyName);
+    }
+
+    public List<String> getCustomerNamesByCompanyNameAndGroupName(String companyName, String groupName) {
+        return repo.getCustomerNamesByCompanyNameAndGroupName(companyName, groupName);
+    }
+
+    public ArrayList<String> getAllCustomersNameAndEmail() {
+        ArrayList<String> customerNameAndEmail = new ArrayList<>();
+        List<Customer> customers = repo.findAll();
+        String value;
+
+        System.out.println("controller: " + customers);
+        for (Customer c : customers) {
+            value = c.getId() + ": " + c.getCustomerName() + " (" + c.getEmail() + ")";
+//            System.out.println("value: " + value);
+            customerNameAndEmail.add(value);
+        }
+
+//        System.out.println("controller: " + customers);
+
+        return customerNameAndEmail;
     }
 
     public boolean registration(Customer customer) {
@@ -34,6 +80,8 @@ public class CustomerController {
         for (String s : splitName) {
             customerInnerName.append(s.charAt(0));
         }
+
+        System.out.println("innerName: " + customerInnerName.toString());
 
         customer.setInnerName(customerInnerName.toString());
     }

@@ -10,7 +10,7 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("ALL")
 public class SimpleOrderForm extends FormLayout {
@@ -28,12 +28,12 @@ public class SimpleOrderForm extends FormLayout {
     private CustomerOrder orderToEdit;
     private AddOrderView addOrderView;
 
-    private ArrayList<String> typesList;
-    private ArrayList<String> purificationsList;
+    private List<String> typesList;
+    private List<String> purificationsList;
 
     private static String REQUIRED_FIELD = "A mező kitöltése kötelező!";
 
-    public SimpleOrderForm(AddOrderView addOrderView, ArrayList<String> typesList, ArrayList<String> purificationsList) {
+    public SimpleOrderForm(AddOrderView addOrderView, List<String> typesList, List<String> purificationsList) {
         this.addOrderView = addOrderView;
         this.typesList = typesList;
         this.purificationsList = purificationsList;
@@ -57,9 +57,12 @@ public class SimpleOrderForm extends FormLayout {
         setSizeUndefined();
 
         //Type settings.
+        type.setPlaceholder("Szekvencia típusa");
         type.focus();
         type.setEmptySelectionAllowed(false);
-//        type.setItems(typesList);
+        type.setItems(typesList);
+//        type.addValueChangeListener(e -> sequence.clear());
+        type.addSelectionListener(e -> sequence.clear());
         dataBinder.forField(type).asRequired(REQUIRED_FIELD).bind(CustomerOrder::getType, CustomerOrder::setType);
 
         //Sequence name settings.
@@ -84,9 +87,8 @@ public class SimpleOrderForm extends FormLayout {
 
         //Purification settings.
         purification.setPlaceholder("Tisztítás típusa");
-//        purification.setItems(purificationsList);
-//        purification.setEmptySelectionAllowed(false);
-        purification.setEmptySelectionCaption("Tisztítási típus kiválasztása");
+        purification.setItems(purificationsList);
+        purification.setEmptySelectionAllowed(false);
         dataBinder.forField(purification).asRequired(REQUIRED_FIELD)
                 .bind(CustomerOrder::getPurification, CustomerOrder::setPurification);
 
@@ -132,10 +134,10 @@ public class SimpleOrderForm extends FormLayout {
     }
 
     private ValidationResult validateSequenceString(String s) {
-//        if (type.getSelectedItem().isPresent()) {
-//            String selectedType = type.getSelectedItem().get();
-//
-//            if (selectedType.equals("DNS")) {
+        if (type.getSelectedItem().isPresent()) {
+            String selectedType = type.getSelectedItem().get();
+
+            if (selectedType.equals("DNS")) {
                 s = s.replace("A", "x").replace("C", "x")
                         .replace("G", "x").replace("T", "x");
 
@@ -146,11 +148,23 @@ public class SimpleOrderForm extends FormLayout {
                     return ValidationResult.ok();
                 } else {
                     System.out.println("False");
+                    return ValidationResult.error("A formátum nem illeszkedik a kiválasztott típushoz!");
                 }
-//            }
-//        }
+            } else if (selectedType.equals("RNS")) {
+                s = s.replace("A", "x").replace("C", "x")
+                        .replace("G", "x").replace("U", "x");
 
-        return ValidationResult.error("A megadott szekvencia formátuma nem megfelelő a kiválasztott típushoz!");
+                if (s.matches("x{" + s.length() + "}")) {
+                    System.out.println("True");
+                    return ValidationResult.ok();
+                } else {
+                    System.out.println("False");
+                    return ValidationResult.error("A formátum nem illeszkedik a kiválasztott típushoz!");
+                }
+            }
+        }
+
+        return ValidationResult.ok();
     }
 
     /**

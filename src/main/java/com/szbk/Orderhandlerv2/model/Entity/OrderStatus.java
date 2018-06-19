@@ -1,21 +1,19 @@
 package com.szbk.Orderhandlerv2.model.Entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
-public class Status {
+@Table(name = "orderstatus")
+public class OrderStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     private String name;
 
-    public Status() {}
+    public OrderStatus() {}
 
-    public Status(String name) {
+    public OrderStatus(String name) {
         this.name = name;
     }
 

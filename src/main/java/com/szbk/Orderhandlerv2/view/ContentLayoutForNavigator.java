@@ -1,6 +1,7 @@
 package com.szbk.Orderhandlerv2.view;
 
 import com.szbk.Orderhandlerv2.view.customerViews.CustomerSideBar;
+import com.szbk.Orderhandlerv2.view.laborViews.LaborSideBar;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewDisplay;
 import com.vaadin.ui.CssLayout;
@@ -22,7 +23,7 @@ public class ContentLayoutForNavigator extends CssLayout implements ViewDisplay 
 
     @Override
     public void showView(View view) {
-        if (view instanceof CustomerSideBar) {
+        if ((view instanceof CustomerSideBar) || (view instanceof LaborSideBar)) {
             addComponentAsFirst(menuLayout);
             menuLayout.setHeight(100, Unit.PERCENTAGE);
             menuLayout.setWidth(20, Unit.PERCENTAGE);

@@ -135,16 +135,25 @@ public class RegistrationView extends VerticalLayout implements View {
     private void validateAndRegisterCustomer() {
         Customer customer = new Customer();
         boolean validationSuccess = true;
-
+        
+        //The two passwords has to be equal.
         if (passwordField.getValue().equals(password2Field.getValue())) {
-            try {
-                dataBinder.writeBean(customer);
-                System.out.println("Customer bean: " + customer);
-            } catch (ValidationException e) {
-                Notification errorMessage = new Notification("Ellenőrizze a hibaüzeneteket az egyes mezők mellett!");
-                errorMessage.setStyleName(ValoTheme.NOTIFICATION_ERROR);
-                errorMessage.setPosition(Position.TOP_CENTER);
-                errorMessage.show(getUI().getPage());
+            if (checkEmail()) {
+                try {
+                    dataBinder.writeBean(customer);
+                    System.out.println("Customer bean: " + customer);
+                } catch (ValidationException e) {
+                    Notification errorMessage = new Notification("Ellenőrizze a hibaüzeneteket az egyes mezők mellett!");
+                    errorMessage.setStyleName(ValoTheme.NOTIFICATION_ERROR);
+                    errorMessage.setPosition(Position.TOP_CENTER);
+                    errorMessage.show(getUI().getPage());
+                    validationSuccess = false;
+                }
+            } else {
+                Notification invalidEmailWarning = new Notification("Az email cím már foglalt!");
+                invalidEmailWarning.setStyleName(ValoTheme.NOTIFICATION_WARNING);
+                invalidEmailWarning.setPosition(Position.TOP_CENTER);
+                invalidEmailWarning.show(getUI().getPage());
                 validationSuccess = false;
             }
         } else {
@@ -161,12 +170,20 @@ public class RegistrationView extends VerticalLayout implements View {
             notification.setPosition(Position.TOP_CENTER);
 
             if (customerController.registration(customer)) {
+                //TODO Maybe a duration to the success notification to not disappear that fast?
                 notification.show(getUI().getPage());
+                getUI().getNavigator().navigateTo("");
             } else {
                 notification.setStyleName(ValoTheme.NOTIFICATION_WARNING);
                 notification.setCaption("Sikertelen regisztráció!");
                 notification.show(getUI().getPage());
             }
         }
+    }
+
+    //Checks, whether someone else registered with the given email before.
+    private boolean checkEmail() {
+        String emailAddress = emailField.getValue();
+        return customerController.getCustomerByEmail(emailAddress) == null;
     }
 }

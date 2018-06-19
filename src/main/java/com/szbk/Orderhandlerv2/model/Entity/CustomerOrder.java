@@ -1,34 +1,42 @@
 package com.szbk.Orderhandlerv2.model.Entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
+@Table(name = "customerorder")
 public class CustomerOrder {
     //Auto generated ID for the customer.
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @Column(name = "customerid")
     private long customerId;
+
+    @Column(name = "sequencename")
     private String sequenceName;
     private String sequence;
+
+    @Column(name = "editedsequence")
     private String editedSequence;
     private int scale;
     private String purification;
     private String type;
+
+    @Column(name = "orderdate")
     private LocalDate orderDate;
     private String status;
     private int price;
+
+    @Column(name = "customerinnerid")
     private String customerInnerId;
 
-    public CustomerOrder() {}
+    public CustomerOrder() {
+        this.status = "Megrendelt";
+    }
 
-    public CustomerOrder(String sequenceName, String sequence, int scale, String purification, String type,
-                         LocalDate orderDate, Long customerId) {
+    public CustomerOrder(String sequenceName, String sequence, int scale, String purification, String type, LocalDate orderDate) {
         this.sequenceName = sequenceName;
         this.sequence = sequence;
         this.scale = scale;
@@ -36,7 +44,6 @@ public class CustomerOrder {
         this.type = type;
         this.orderDate = orderDate;
         this.status = "Megrendelt";
-        this.customerId = customerId;
     }
 
     public long getCustomerId() {
@@ -135,7 +142,7 @@ public class CustomerOrder {
 
     @Override
     public String toString() {
-        return "sequence: " + sequence + ", scale: " + scale + ", purification: " + purification + ", type: " + type +
+        return "sequence: " + sequence + ", ed.sequence: " + editedSequence + " , scale: " + scale + ", purification: " + purification + ", type: " + type +
                 ", orderDate: " + orderDate + "customerId: " + customerId;
     }
 }

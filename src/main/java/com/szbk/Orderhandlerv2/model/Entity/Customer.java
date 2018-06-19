@@ -19,6 +19,7 @@ public class Customer {
     @Column(name = "companyname")
     private String companyName;
 
+    @Column(name = "innername")
     private String innerName;
 
     public Customer() {}
@@ -91,6 +92,6 @@ public class Customer {
     @Override
     public String toString() {
         return "id: " + this.id + " customer name: " + this.customerName + " password: " + password + " email: " + email
-                + " groupname: " + groupName + " companyname: " + companyName;
+                + " groupname: " + groupName + " companyname: " + companyName + " innerName: " + innerName;
     }
 }

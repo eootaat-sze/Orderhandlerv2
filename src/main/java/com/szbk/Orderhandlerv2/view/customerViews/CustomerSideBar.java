@@ -2,6 +2,7 @@ package com.szbk.Orderhandlerv2.view.customerViews;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.SpringView;
@@ -24,7 +25,7 @@ public class CustomerSideBar extends CssLayout implements View {
         listOrdersBtn = new Button("Eddigi rendeléseim");
         logoutBtn = new Button("Kilépés");
 
-        setupContent();
+        // setupContent();
     }
 
     private void setupContent() {
@@ -43,7 +44,7 @@ public class CustomerSideBar extends CssLayout implements View {
         listOrdersBtn.addStyleNames(ValoTheme.BUTTON_LINK, ValoTheme.MENU_ITEM);
         listOrdersBtn.setWidth(100, Unit.PERCENTAGE);
         listOrdersBtn.setIcon(VaadinIcons.LIST);
-        listOrdersBtn.addClickListener(e -> getUI().getNavigator().navigateTo("listOrdersForCustomer"));
+        listOrdersBtn.addClickListener(e -> getUI().getNavigator().navigateTo("ordersListView"));
 
         //Logout button settings.
         logoutBtn.addStyleNames(ValoTheme.BUTTON_LINK, ValoTheme.MENU_ITEM);
@@ -57,5 +58,15 @@ public class CustomerSideBar extends CssLayout implements View {
 
         addComponents(menuTitle, addOrderBtn, listOrdersBtn, logoutBtn);
         setStyleName(ValoTheme.MENU_ROOT);
+    }
+
+    @Override
+    public void enter(ViewChangeEvent event) {
+        if ((VaadinSession.getCurrent().getAttribute("role") == null) || (!VaadinSession.getCurrent().getAttribute("role").equals("customer"))) {
+            getUI().getNavigator().navigateTo("");
+            System.out.println("No session");
+        }
+
+        setupContent();
     }
 }

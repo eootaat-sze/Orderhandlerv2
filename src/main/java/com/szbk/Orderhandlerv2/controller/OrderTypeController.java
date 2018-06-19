@@ -5,6 +5,7 @@ import com.szbk.Orderhandlerv2.model.Entity.Type;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,13 @@ public class OrderTypeController {
         repo.save(t);
 
         return repo.count() > count;
+    }
+
+    public List<String> getTypeNames() {
+        List<String> typeNames = repo.getTypeNames();
+        System.out.println("typeNames: " + typeNames);
+
+        return typeNames;
     }
 
     public List<String> getTypeNamesAndPricesAsStrings() {

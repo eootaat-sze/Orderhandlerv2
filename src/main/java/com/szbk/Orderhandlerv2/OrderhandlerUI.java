@@ -10,6 +10,7 @@ import com.szbk.Orderhandlerv2.view.customerViews.CustomerSideBar;
 import com.szbk.Orderhandlerv2.view.customerViews.ListOrdersForCustomer;
 import com.vaadin.annotations.Title;
 import com.vaadin.navigator.Navigator;
+import com.vaadin.navigator.PushStateNavigation;
 //import com.vaadin.navigator.PushStateNavigation;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewDisplay;
@@ -26,19 +27,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Title("Orderhandler")
 @SpringUI
 @UIScope
+@PushStateNavigation
 public class OrderhandlerUI extends UI {
     private SpringViewProvider springViewProvider;
-
-//    LoginView loginView;
-//    CustomerMainView customerMainView;
+    
     private Navigator navigator;
 
     private ContentLayoutForNavigator content;
-
-//    public OrderhandlerUI(LoginView loginView, CustomerMainView customerMainView) {
-//        this.loginView = loginView;
-//        this.customerMainView = customerMainView;
-//    }
 
     @Autowired
     public OrderhandlerUI(SpringViewProvider springViewProvider) {
