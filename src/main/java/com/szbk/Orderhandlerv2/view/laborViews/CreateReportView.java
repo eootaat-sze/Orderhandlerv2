@@ -146,7 +146,7 @@ public class CreateReportView extends VerticalLayout implements View {
     private void saveChangesOnOrders(Set<CustomerOrder> selectedItems) {
         exportFileBtn.setEnabled(false);
         multiSelectOnGrid.clear();
-        orderController.changeStatusOnOrders(selectedItems, "Elküldve");
+        orderController.changeStatusOnOrders(selectedItems, "Elkészült");
     }
     
     private void listOrdersForCustomer() {

@@ -34,4 +34,8 @@ public class Type {
     public void setPrice(int price) {
         this.price = price;
     }
+
+    public long getId() {
+        return this.id;
+    }
 }

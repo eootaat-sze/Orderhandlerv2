@@ -5,19 +5,20 @@ import java.util.List;
 
 import com.szbk.Orderhandlerv2.controller.CustomerController;
 import com.szbk.Orderhandlerv2.controller.OrderController;
+import com.szbk.Orderhandlerv2.helpers.labor.CreateDownloadFileForSettlementPage;
 import com.szbk.Orderhandlerv2.model.Entity.Customer;
 import com.szbk.Orderhandlerv2.model.Entity.CustomerOrder;
 import com.vaadin.data.HasValue.ValueChangeEvent;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FileDownloader;
+import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
@@ -30,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class SettlementView extends VerticalLayout implements View {
     private CustomerController customerController;
     private OrderController orderController;
+    private CreateDownloadFileForSettlementPage createFileToDownload;
 
     private HorizontalLayout filteringLayout;
     private ComboBox<String> companyNameSelect;
@@ -39,6 +41,7 @@ public class SettlementView extends VerticalLayout implements View {
     private Button downloadBtn;
 
     private FileDownloader fileDownloader;
+    private StreamResource fileToDownload;
 
     private List<String> companyNames;
     private String selectedCompanyName;
@@ -61,13 +64,12 @@ public class SettlementView extends VerticalLayout implements View {
 
     @Override
     public void enter(ViewChangeEvent event) {
-        // if ((VaadinSession.getCurrent().getAttribute("role") == null) || (VaadinSession.getCurrent().getAttribute("role").equals("laboruser"))) {
-        //     getUI().getNavigator().navigateTo("");
-        // } else {
-        //     getUI().getPage().setTitle("Elszámolás készítése");
-        //     setupContent();
-        // }
-        setupContent();
+        if ((VaadinSession.getCurrent().getAttribute("role") == null) || (!VaadinSession.getCurrent().getAttribute("role").equals("laboruser"))) {
+            getUI().getNavigator().navigateTo("");
+        } else {
+            getUI().getPage().setTitle("Elszámolás készítése");
+            setupContent();
+        }
     }
 
 	private void setupContent() {
@@ -167,5 +169,17 @@ public class SettlementView extends VerticalLayout implements View {
 
 	private void createAndDownloadFile() {
         //TODO Create file for download
-	}
+        createFileToDownload = new CreateDownloadFileForSettlementPage(customerController, selectedCompanyName,
+                                                                        selectedGroupName, selectedCustomerName);
+        createFileToDownload.setOrdersToExport(filteredOrders);
+        fileToDownload = createFileToDownload.createResourceForDownload();
+        fileDownloader = new FileDownloader(fileToDownload);
+        fileDownloader.extend(downloadBtn);
+        downloadBtn.addClickListener(event -> saveChangesOnOrders(filteredOrders));
+    }
+    
+    private void saveChangesOnOrders(List<CustomerOrder> selectedItems) {
+        downloadBtn.setEnabled(false);
+        orderController.changeStatusOnOrders(selectedItems, "Fizetve");
+    }
 }

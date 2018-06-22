@@ -20,6 +20,10 @@ public class LaborUserController {
         return repo.count() > count;
     }
 
+    public boolean saveLaboruser(LaborUser user) {
+        return repo.save(user) != null;
+    }
+
     public LaborUser login(String email, String password) {
         LaborUser loginLaborUser = repo.findLaborUserByEmailAndPassword(email, password);
 

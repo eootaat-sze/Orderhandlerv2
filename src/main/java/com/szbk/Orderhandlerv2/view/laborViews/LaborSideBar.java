@@ -61,7 +61,7 @@ public class LaborSideBar extends CssLayout implements View {
         overviewBtn.addStyleNames(ValoTheme.BUTTON_LINK, ValoTheme.MENU_ITEM);
         overviewBtn.setWidth(100, Unit.PERCENTAGE);
         overviewBtn.setIcon(VaadinIcons.DATABASE);
-        overviewBtn.addClickListener(e -> Notification.show("Yeey!"));
+        overviewBtn.addClickListener(e -> getUI().getNavigator().navigateTo("overview"));
 
         //Logout button settings.
         logoutBtn.addStyleNames(ValoTheme.BUTTON_LINK, ValoTheme.MENU_ITEM);

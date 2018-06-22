@@ -118,7 +118,7 @@ public class SimpleOrderForm extends FormLayout {
             dataBinder.writeBean(orderToEdit);
             success = true;
         } catch (ValidationException e) {
-            Notification notification = new Notification("Ellenőrizze a hibaüzeneteket az egyes mezők mellett!");
+            Notification notification = new Notification("Ellenőrizd a hibaüzeneteket az egyes mezők mellett!");
             notification.setStyleName(ValoTheme.NOTIFICATION_ERROR);
             notification.setPosition(Position.TOP_CENTER);
             notification.show(getUI().getPage());

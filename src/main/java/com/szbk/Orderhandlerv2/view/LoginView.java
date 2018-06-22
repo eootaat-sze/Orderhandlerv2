@@ -58,6 +58,7 @@ public class LoginView extends VerticalLayout implements View {
         popupInformation = new Notification("Információ");
 
         dataBinder = new Binder<>();
+        laborUserController.saveLaboruser(new LaborUser("asd", "labor@vaadin.com", "labor"));
 
         setupContent();
     }
@@ -109,8 +110,8 @@ public class LoginView extends VerticalLayout implements View {
         registrationBtn.addClickListener(e -> {
             //Navigate to the registration view, or open registration window. It depends on... idk.
 //            showRegistrationWindow();
-            // getUI().getNavigator().navigateTo("registration");
-            getUI().getNavigator().navigateTo("laboruser");
+            getUI().getNavigator().navigateTo("registration");
+            // getUI().getNavigator().navigateTo("laboruser");
         });
 
         loginLayout.addComponents(emailField, passwordField, loginBtn);
@@ -143,7 +144,7 @@ public class LoginView extends VerticalLayout implements View {
 
         if (validationSuccess) {
             LaborUser laboruserToLogin = laborUserController.login(loginUser.getEmail(), loginUser.getPassword());
-
+            System.out.println("laboruser[login]: " + laboruserToLogin);
             if (laboruserToLogin != null) {
                 VaadinSession.getCurrent().setAttribute("laborUsername", laboruserToLogin.getName());
                 VaadinSession.getCurrent().setAttribute("email", laboruserToLogin.getEmail());
@@ -152,6 +153,7 @@ public class LoginView extends VerticalLayout implements View {
                 getUI().getNavigator().navigateTo("laboruser");
             } else {
                 Customer customerToLogin = customerController.login(loginUser.getEmail(), loginUser.getPassword());
+                System.out.println("customer[login]: " + customerToLogin);
                 if (customerToLogin != null) {
                     VaadinSession.getCurrent().setAttribute("customerName", customerToLogin.getCustomerName());
                     VaadinSession.getCurrent().setAttribute("groupName", customerToLogin.getGroupName());

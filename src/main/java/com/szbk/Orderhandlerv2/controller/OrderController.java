@@ -53,6 +53,13 @@ public class OrderController {
         }
     }
 
+    public void changeStatusOnOrders(List<CustomerOrder> orders, String status) {
+        for (CustomerOrder order: orders) {
+            order.setStatus(status);
+            saveOrder(order);
+        }
+    }
+
     public boolean saveManyOrder(ArrayList<CustomerOrder> ordersToSave) {
         boolean success = false;
 

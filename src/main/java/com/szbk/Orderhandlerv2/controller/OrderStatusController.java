@@ -3,6 +3,7 @@ package com.szbk.Orderhandlerv2.controller;
 import java.util.List;
 
 import com.szbk.Orderhandlerv2.model.OrderStatusRepository;
+import com.szbk.Orderhandlerv2.model.Entity.OrderStatus;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,5 +22,9 @@ public class OrderStatusController {
         System.out.println("repo: " + repo);
 
         return allStatusNames;
+    }
+
+    public List<OrderStatus> getAllStatus() {
+        return repo.findAll();
     }
 }

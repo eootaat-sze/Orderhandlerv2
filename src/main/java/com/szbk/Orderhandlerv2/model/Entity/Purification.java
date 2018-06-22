@@ -36,4 +36,8 @@ public class Purification {
     public void setPrice(int price) {
         this.price = price;
     }
+
+    public long getId() {
+        return this.id;
+    }
 }
