@@ -14,6 +14,9 @@ public class CustomerOrder {
     @Column(name = "customerid")
     private long customerId;
 
+    @Column(name = "customer_name")
+    private String customerName;
+
     @Column(name = "sequencename")
     private String sequenceName;
     private String sequence;
@@ -43,7 +46,7 @@ public class CustomerOrder {
         this.purification = purification;
         this.type = type;
         this.orderDate = orderDate;
-        this.status = "Megrendelt";
+        this.status = "Új megrendelés";
     }
 
     public long getCustomerId() {
@@ -52,6 +55,14 @@ public class CustomerOrder {
 
     public void setCustomerId(long customerId) {
         this.customerId = customerId;
+    }
+
+    public String getCustomerName() {
+        return this.customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
     }
 
     public String getSequenceName() {

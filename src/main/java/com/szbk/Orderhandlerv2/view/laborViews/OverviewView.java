@@ -11,16 +11,14 @@ import com.szbk.Orderhandlerv2.model.Entity.CustomerOrder;
 import com.szbk.Orderhandlerv2.model.Entity.LaborUser;
 import com.szbk.Orderhandlerv2.model.Entity.OrderStatus;
 import com.szbk.Orderhandlerv2.model.Entity.Purification;
-import com.szbk.Orderhandlerv2.model.Entity.Type;
+import com.szbk.Orderhandlerv2.model.Entity.OrderType;
 import com.szbk.Orderhandlerv2.view.laborViews.OverviewComponents.CustomerComponent;
 import com.szbk.Orderhandlerv2.view.laborViews.OverviewComponents.CustomerOrderComponent;
-import com.szbk.Orderhandlerv2.view.laborViews.OverviewComponents.LaboruserActionForm;
 import com.szbk.Orderhandlerv2.view.laborViews.OverviewComponents.LaboruserComponent;
 import com.szbk.Orderhandlerv2.view.laborViews.OverviewComponents.OrderTypeComponent;
 import com.szbk.Orderhandlerv2.view.laborViews.OverviewComponents.PurificationComponent;
 import com.szbk.Orderhandlerv2.view.laborViews.OverviewComponents.StatusComponent;
 import com.vaadin.data.HasValue.ValueChangeEvent;
-import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.VaadinSession;
@@ -63,7 +61,7 @@ public class OverviewView extends VerticalLayout implements View {
     private Grid<Customer> customerGrid;
     private Grid<CustomerOrder> ordersGrid;
     private Grid<LaborUser> laboruserGrid;
-    private Grid<Type> typesGrid;
+    private Grid<OrderType> typesGrid;
     private Grid<Purification> purificationGrid;
     private Grid<OrderStatus> statusGrid;
     // private HorizontalLayout gridAndFormLayout;
@@ -196,7 +194,7 @@ public class OverviewView extends VerticalLayout implements View {
 
     private void setupTypesGrid() {
         if (typesGrid == null) {
-            typesGrid = new Grid<>(Type.class);
+            typesGrid = new Grid<>(OrderType.class);
             typesGrid.setSizeFull();
             typesGrid.setColumnOrder("name", "price", "id");
             typesGrid.getColumn("name").setCaption("Típus neve");

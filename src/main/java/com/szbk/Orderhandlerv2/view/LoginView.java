@@ -1,5 +1,7 @@
 package com.szbk.Orderhandlerv2.view;
 
+import java.io.File;
+
 import com.szbk.Orderhandlerv2.controller.CustomerController;
 import com.szbk.Orderhandlerv2.controller.LaborUserController;
 import com.szbk.Orderhandlerv2.model.Entity.Customer;
@@ -11,6 +13,9 @@ import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.FileResource;
+import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.Position;
 import com.vaadin.spring.annotation.SpringComponent;
@@ -22,10 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @SpringComponent
 @SpringView(name = "")
 public class LoginView extends VerticalLayout implements View {
-//    @Autowired
     private LaborUserController laborUserController;
-
-//    @Autowired
     private CustomerController customerController;
 
     private Panel contentPanel;
@@ -35,11 +37,14 @@ public class LoginView extends VerticalLayout implements View {
     private PasswordField passwordField;
     private Button loginBtn;
     private Button registrationBtn;
-    private Notification popupInformation;
+    private HorizontalLayout outerLayout;
+    private Image img;
 
     private Binder<User> dataBinder;
+    private String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
 
     private static String REQUIRED_FIELD = "A mező kitöltése kötelező!";
+    private static String INVALID_EMAIL = "Érvénytelen email cím formátum!";
 
     public LoginView() {}
 
@@ -55,76 +60,84 @@ public class LoginView extends VerticalLayout implements View {
         passwordField = new PasswordField();
         loginBtn = new Button("Belépés");
         registrationBtn = new Button("Regisztráció");
-        popupInformation = new Notification("Információ");
-
+        outerLayout = new HorizontalLayout();
         dataBinder = new Binder<>();
-        laborUserController.saveLaboruser(new LaborUser("asd", "labor@vaadin.com", "labor"));
 
-        setupContent();
+        // System.out.println("[loginview] constructor");
     }
 
-//    @Override
-//    public void enter(ViewChangeListener.ViewChangeEvent event) {
-//        setupContent();
-//    }
+   @Override
+   public void enter(ViewChangeListener.ViewChangeEvent event) {
+    //    System.out.println("[loginview] enter method");
+       setContentForUserRole();
+   }
 
     private void setupContent() {
+        System.out.println("path: " + basepath);
+        // System.out.println("[loginview] setupcontent method");
         setSizeFull();
 
-        //Displays a notification with some information, but I didn't work it out properly.
-    //    popupInformation.setStyleName(ValoTheme.NOTIFICATION_CLOSABLE);
-    //    popupInformation.setDescription("Ez itt a főoldal. Itt tudsz belépni vagy regisztrálni.");
-    //    popupInformation.setDelayMsec(-1);
-    //    popupInformation.setPosition(Position.TOP_RIGHT);
-    //    popupInformation.setIcon(VaadinIcons.INFO);
-    //    popupInformation.show(UI.getCurrent().getPage());
+        //Img settings.
+        FileResource resource = new FileResource(new File(basepath + "/WEB-INF/images/background.jpg"));
+        img = new Image("", resource);
+        img.setWidth(100, Unit.PERCENTAGE);
+        img.setHeight(100, Unit.PERCENTAGE);
 
         //Email field settings
+        emailField.setCaption("Email cím");
+        emailField.setWidth(100, Unit.PERCENTAGE);
         emailField.setPlaceholder("Email cím");
         emailField.setIcon(VaadinIcons.USER);
         emailField.setStyleName(ValoTheme.TEXTFIELD_INLINE_ICON);
         emailField.focus();
-//        dataBinder.forField(emailField).asRequired(REQUIRED_FIELD)
-//                .withValidator(new EmailValidator("Érvénytelen email cím formátum!"))
-//                .bind(User::getEmail, User::setEmail);
         dataBinder.forField(emailField)
-                .withValidator(new EmailValidator("Érvénytelen email cím formátum!"))
+                .withValidator(new EmailValidator(INVALID_EMAIL))
                 .bind(User::getEmail, User::setEmail);
 
         //Password field settings
+        passwordField.setCaption("Jelszó");
+        passwordField.setWidth(100, Unit.PERCENTAGE);
         passwordField.setPlaceholder("Jelszó");
         passwordField.setIcon(VaadinIcons.LOCK);
         passwordField.setStyleName(ValoTheme.TEXTFIELD_INLINE_ICON);
-//        dataBinder.forField(passwordField).asRequired(REQUIRED_FIELD).bind(User::getPassword, User::setPassword);
-        dataBinder.forField(passwordField).bind(User::getPassword, User::setPassword);
+        dataBinder.forField(passwordField).asRequired(REQUIRED_FIELD)
+                .bind(User::getPassword, User::setPassword);
 
         //Login button settings
         loginBtn.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        loginBtn.setWidth(50, Unit.PERCENTAGE);
         loginBtn.setClickShortcut(ShortcutAction.KeyCode.ENTER);
         loginBtn.addClickListener(e -> {
             validateAndLoginUser();
-            // getUI().getNavigator().navigateTo("laboruser");
         });
 
         //Registration button settings
         registrationBtn.addClickListener(e -> {
-            //Navigate to the registration view, or open registration window. It depends on... idk.
-//            showRegistrationWindow();
+            //Navigate to the registration view, or open registration window. It depends on... idk. update: Navigator FTW!
             getUI().getNavigator().navigateTo("registration");
-            // getUI().getNavigator().navigateTo("laboruser");
         });
 
-        loginLayout.addComponents(emailField, passwordField, loginBtn);
-        mainLayout.addComponents(loginLayout, registrationBtn);
+        // loginLayout.addComponents(emailField, passwordField, loginBtn);
+        // mainLayout.addComponents(loginLayout, registrationBtn);
+        mainLayout.addComponents(emailField, passwordField, loginBtn, registrationBtn);
+        mainLayout.setComponentAlignment(loginBtn, Alignment.BOTTOM_CENTER);
         mainLayout.setComponentAlignment(registrationBtn, Alignment.BOTTOM_CENTER);
 
         //Content panel settings.
-        contentPanel.setSizeUndefined();
+        // contentPanel.setSizeUndefined();
+        contentPanel.setWidth(100, Unit.PERCENTAGE);
         contentPanel.setCaption("Belépés");
         contentPanel.setContent(mainLayout);
 
-        addComponents(contentPanel);
-        setComponentAlignment(contentPanel, Alignment.MIDDLE_CENTER);
+        outerLayout.setWidth(50, Unit.PERCENTAGE);
+        outerLayout.setHeight(50, Unit.PERCENTAGE);
+        // outerLayout.addComponents(img, contentPanel);
+        outerLayout.addComponents(contentPanel);
+        // outerLayout.setComponentAlignment(img, Alignment.MIDDLE_LEFT);
+        // outerLayout.setComponentAlignment(contentPanel, Alignment.MIDDLE_RIGHT);
+
+        addComponents(outerLayout);
+        setComponentAlignment(outerLayout, Alignment.MIDDLE_CENTER);
     }
 
     private void validateAndLoginUser() {
@@ -133,7 +146,6 @@ public class LoginView extends VerticalLayout implements View {
 
         try {
             dataBinder.writeBean(loginUser);
-//            System.out.println("user: " + loginUser);
             validationSuccess = true;
         } catch(ValidationException e) {
             Notification notification = new Notification("Ellenőrizze a hibaüzeneteket az egyes mezők mellett!");
@@ -142,6 +154,9 @@ public class LoginView extends VerticalLayout implements View {
             notification.show(getUI().getPage());
         }
 
+        //Basic idea: try to login a laboruser and if that fails, try to login a customer.
+        //It's an efficient way, we can say, because there'll be less laboruser than customer, so it worth to search through
+        //their (laboruser) table first.
         if (validationSuccess) {
             LaborUser laboruserToLogin = laborUserController.login(loginUser.getEmail(), loginUser.getPassword());
             System.out.println("laboruser[login]: " + laboruserToLogin);
@@ -149,7 +164,6 @@ public class LoginView extends VerticalLayout implements View {
                 VaadinSession.getCurrent().setAttribute("laborUsername", laboruserToLogin.getName());
                 VaadinSession.getCurrent().setAttribute("email", laboruserToLogin.getEmail());
                 VaadinSession.getCurrent().setAttribute("role", "laboruser");
-//                VaadinSession.getCurrent().setAttribute("id", lb.getId());
                 getUI().getNavigator().navigateTo("laboruser");
             } else {
                 Customer customerToLogin = customerController.login(loginUser.getEmail(), loginUser.getPassword());
@@ -162,17 +176,27 @@ public class LoginView extends VerticalLayout implements View {
                     VaadinSession.getCurrent().setAttribute("role", "customer");
                     VaadinSession.getCurrent().setAttribute("innerName", customerToLogin.getInnerName());
                     getUI().getNavigator().navigateTo("customer");
+                } else {
+                    //No user with the specified data, display a notification.
+                    Notification notification = new Notification("Sikertelen belépés! Nincs ilyen felhasználó!");
+                    notification.setStyleName(ValoTheme.NOTIFICATION_ERROR);
+                    notification.setPosition(Position.TOP_CENTER);
+                    notification.show(getUI().getPage());
                 }
             }
-
-            //No user with the specified data, display a notification.
-            Notification notification = new Notification("Sikertelen belépés! Nincs ilyen felhasználó!");
-            notification.setStyleName(ValoTheme.NOTIFICATION_ERROR);
-            notification.setPosition(Position.TOP_CENTER);
         }
     }
 
-    private void showRegistrationWindow() {
-        getUI().getNavigator().navigateTo("registration");
+    //Routing by role: if the role is neither customer nor laboruser, setup the login view content.
+    private void setContentForUserRole() {
+        String userRole = String.valueOf(VaadinSession.getCurrent().getAttribute("role"));
+
+        if (userRole.equals("customer")) {
+            getUI().getNavigator().navigateTo("customerView");
+        } else if (userRole.equals("laboruser")) {
+           getUI().getNavigator().navigateTo("laboruserView");
+        } else {
+            setupContent();
+        }
     }
 }

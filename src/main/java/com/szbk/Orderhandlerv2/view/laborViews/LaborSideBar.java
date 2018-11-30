@@ -69,7 +69,7 @@ public class LaborSideBar extends CssLayout implements View {
         logoutBtn.setIcon(VaadinIcons.EXIT);
         logoutBtn.addClickListener(e -> {
 //            getUI().getPage().reload();
-            VaadinSession.getCurrent().setAttribute("role", "none");
+            VaadinSession.getCurrent().setAttribute("role", null);
             getUI().getNavigator().navigateTo("");
         });
 
@@ -79,6 +79,12 @@ public class LaborSideBar extends CssLayout implements View {
     
     @Override
     public void enter(ViewChangeEvent event) {
-        View.super.enter(event);
+        String role = String.valueOf(VaadinSession.getCurrent().getAttribute("role"));
+        System.out.println("labor_role: " + role);
+
+        if (role == null || !role.equals("laboruser")) {
+            getUI().getNavigator().navigateTo("");
+            System.out.println("No session");
+        }
     }
 }

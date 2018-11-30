@@ -4,6 +4,7 @@ import com.szbk.Orderhandlerv2.controller.OrderController;
 import com.szbk.Orderhandlerv2.controller.OrderTypeController;
 import com.szbk.Orderhandlerv2.controller.PurificationController;
 import com.szbk.Orderhandlerv2.model.Entity.CustomerOrder;
+import com.vaadin.event.selection.SingleSelectionEvent;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -21,15 +22,22 @@ import java.util.*;
 @SpringComponent
 @SpringView(name = "addOrder")
 public class AddOrderView extends VerticalLayout implements View {
+    private static final String SINGLE_ORDER = "Egy megrendelés";
+    private static final String MULTIPLE_ORDER = "Fájl feltöltés";
+    private static final String DROP_CONTENT = "Táblázat tartalmának elvetése";
+    private static final String SEND_ORDERS = "Megrendelések elküldése";
+
     private OrderController orderController;
     private OrderTypeController orderTypeController;
     private PurificationController purificationController;
 
     private SimpleOrderForm simpleOrderForm;
+    private FileUploadWindow uploadWindow;
 
     private HorizontalLayout controlsLayout;
     private HorizontalLayout gridAndFormLayout;
-    private Button newOrderBtn;
+    private HorizontalLayout sendAndDropBtnLayout;
+    private ComboBox<String> orderQuantitySelect; 
     private Button dropOrdersFromGridBtn;
     private Grid<CustomerOrder> newOrdersGrid;
     private Button sendOrdersBtn;
@@ -49,10 +57,11 @@ public class AddOrderView extends VerticalLayout implements View {
         controlsLayout = new HorizontalLayout();
         gridAndFormLayout = new HorizontalLayout();
         newOrdersGrid = new Grid<>(CustomerOrder.class);
-        newOrderBtn = new Button("Új megrendelés felvétele");
-        dropOrdersFromGridBtn = new Button("Táblázat tartalmának elvetése");
+        sendAndDropBtnLayout = new HorizontalLayout();
+        orderQuantitySelect = new ComboBox<>();
+        dropOrdersFromGridBtn = new Button(DROP_CONTENT);
         gridContentOrdersList = new ArrayList<>();
-        sendOrdersBtn = new Button("A táblázatba felvett megrendelések leadása");
+        sendOrdersBtn = new Button(SEND_ORDERS);
     }
 
     @Override
@@ -69,15 +78,17 @@ public class AddOrderView extends VerticalLayout implements View {
     private void setupContent() {
         //View settings.
         setSizeFull();
-        addComponents(controlsLayout, gridAndFormLayout, sendOrdersBtn);
+        addComponents(controlsLayout, gridAndFormLayout, sendAndDropBtnLayout);
         setComponentAlignment(controlsLayout, Alignment.TOP_CENTER);
-        setComponentAlignment(sendOrdersBtn, Alignment.BOTTOM_CENTER);
+        setComponentAlignment(sendAndDropBtnLayout, Alignment.BOTTOM_CENTER);
         setExpandRatio(gridAndFormLayout, 1);
 
-        //New order btn settings.
-        newOrderBtn.addStyleNames(ValoTheme.BUTTON_FRIENDLY, ValoTheme.BUTTON_ICON_ALIGN_RIGHT);
-        newOrderBtn.setIcon(VaadinIcons.PLUS);
-        newOrderBtn.addClickListener(e -> newOrderClick());
+        //Simple or multiple order type selection
+        orderQuantitySelect.setItems(SINGLE_ORDER, MULTIPLE_ORDER);
+        orderQuantitySelect.setWidth(50, Unit.PERCENTAGE);
+        orderQuantitySelect.setEmptySelectionAllowed(false);
+        orderQuantitySelect.setPlaceholder("Egy megrendelés vagy fájl feltöltés?");
+        orderQuantitySelect.addSelectionListener(e -> handleQuantitySelection(e));
 
         //Drop from grid btn settings.
         dropOrdersFromGridBtn.addStyleNames(ValoTheme.BUTTON_DANGER, ValoTheme.BUTTON_ICON_ALIGN_RIGHT);
@@ -88,6 +99,11 @@ public class AddOrderView extends VerticalLayout implements View {
         gridAndFormLayout.addComponents(newOrdersGrid, simpleOrderForm);
         gridAndFormLayout.setSizeFull();
         gridAndFormLayout.setExpandRatio(newOrdersGrid, 1);
+
+        //Send and drop layout settings.
+        sendAndDropBtnLayout.addComponents(sendOrdersBtn, dropOrdersFromGridBtn);
+        sendAndDropBtnLayout.setComponentAlignment(sendOrdersBtn, Alignment.BOTTOM_LEFT);
+        sendAndDropBtnLayout.setComponentAlignment(dropOrdersFromGridBtn, Alignment.BOTTOM_RIGHT);
 
         //New orders grid settings.
         newOrdersGrid.setSizeFull();
@@ -106,13 +122,35 @@ public class AddOrderView extends VerticalLayout implements View {
 
         //Send orders btn settings.
         sendOrdersBtn.setStyleName(ValoTheme.BUTTON_PRIMARY);
+        sendOrdersBtn.setIcon(VaadinIcons.CHECK);
         sendOrdersBtn.addClickListener(e -> {
             saveOrders();
         });
 
         //Controls layout settings.
-        controlsLayout.setSizeUndefined();
-        controlsLayout.addComponents(newOrderBtn, dropOrdersFromGridBtn);
+        controlsLayout.setWidth(100, Unit.PERCENTAGE);
+        // controlsLayout.addComponents(orderQuantitySelect, dropOrdersFromGridBtn);
+        controlsLayout.addComponents(orderQuantitySelect);
+        controlsLayout.setComponentAlignment(orderQuantitySelect, Alignment.TOP_CENTER);
+    }
+
+    private void handleQuantitySelection(SingleSelectionEvent<String> e) {
+        if (e.getValue().equals(SINGLE_ORDER)) {
+            displayNewOrderForm();
+        } else {
+            createFileUploadWindow();
+        }
+    }
+
+	private void createFileUploadWindow() {
+        if (uploadWindow == null) {
+            uploadWindow = new FileUploadWindow(this);
+        }
+
+        if (simpleOrderForm != null && simpleOrderForm.isVisible()) {
+            simpleOrderForm.setVisible(false);
+        }
+        getUI().addWindow(uploadWindow);
     }
 
     private void saveOrders() {
@@ -121,6 +159,7 @@ public class AddOrderView extends VerticalLayout implements View {
             succesNotification.setStyleName(ValoTheme.NOTIFICATION_SUCCESS);
             succesNotification.setPosition(Position.TOP_CENTER);
             succesNotification.show(getUI().getPage());
+            dropGridContent();
         } else {
             Notification warningNotification = new Notification("Sikertelen rendelés! Próbálja meg később!");
             warningNotification.setStyleName(ValoTheme.NOTIFICATION_ERROR);
@@ -135,9 +174,8 @@ public class AddOrderView extends VerticalLayout implements View {
         newOrdersGrid.setItems(gridContentOrdersList);
 	}
 
-	private void newOrderClick() {
+	private void displayNewOrderForm() {
         //Add new row to the grid.
-        System.out.println("New order btn was clicked");
         newOrdersGrid.asSingleSelect().clear();
         simpleOrderForm.setOrderToEdit(new CustomerOrder(), true);
     }
@@ -149,8 +187,25 @@ public class AddOrderView extends VerticalLayout implements View {
         newOrdersGrid.setItems(gridContentOrdersList);
     }
 
+    public void addOrdersToTheGrid(List<CustomerOrder> orderstoAdd) {
+        gridContentOrdersList.addAll(orderstoAdd);
+        newOrdersGrid.setItems(gridContentOrdersList);
+    }
+
     public void removeOrderFromGrid(CustomerOrder orderToRemove) {
         gridContentOrdersList.remove(orderToRemove);
         newOrdersGrid.setItems(gridContentOrdersList);
+    }
+
+    public void addOrderFromFileToGrid(String orders) {
+        List<CustomerOrder> uploadedOrders = orderController.processUploadedFileAsString(orders);
+        uploadedOrders = orderController.setCustomerNameAndIdToOrders(uploadedOrders, VaadinSession.getCurrent());
+        if (uploadedOrders != null) {
+            System.out.println();
+            uploadedOrders.forEach(item -> System.out.println(item + "\n"));
+            Notification.show("Sikeres feltöltés!");
+            addOrdersToTheGrid(uploadedOrders);
+        }
+        getUI().removeWindow(uploadWindow);
     }
 }

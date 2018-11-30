@@ -1,11 +1,10 @@
 package com.szbk.Orderhandlerv2.controller;
 
+import com.szbk.Orderhandlerv2.model.Entity.OrderType;
 import com.szbk.Orderhandlerv2.model.OrderTypeRepository;
-import com.szbk.Orderhandlerv2.model.Entity.Type;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +13,7 @@ public class OrderTypeController {
     @Autowired
     OrderTypeRepository repo;
 
-    public boolean saveType(Type t) {
+    public boolean saveType(OrderType t) {
         long count = repo.count();
         repo.save(t);
 
@@ -29,11 +28,11 @@ public class OrderTypeController {
     }
 
     public List<String> getTypeNamesAndPricesAsStrings() {
-        List<Type> typesList = repo.findAll();
+        List<OrderType> typesList = repo.findAll();
         List<String> values = new ArrayList<>();
         String value;
 
-        for (Type item : typesList) {
+        for (OrderType item : typesList) {
             value = item.getName() + " - " + item.getPrice() + " Ft";
             values.add(value);
         }
@@ -41,7 +40,7 @@ public class OrderTypeController {
         return values;
     }
 
-    public List<Type> getAllTypes() {
+    public List<OrderType> getAllTypes() {
         return repo.findAll();
     }
 }

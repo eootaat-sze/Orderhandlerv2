@@ -1,7 +1,8 @@
-package com.szbk.Orderhandlerv2.view.laborViews.OverviewComponents;
+package com.szbk.Orderhandlerv2.view.laborViews.OverviewComponents.Forms;
 
 import com.szbk.Orderhandlerv2.controller.LaborUserController;
 import com.szbk.Orderhandlerv2.model.Entity.LaborUser;
+import com.szbk.Orderhandlerv2.view.laborViews.OverviewComponents.LaboruserComponent;
 import com.vaadin.data.Binder;
 import com.vaadin.data.ValidationException;
 import com.vaadin.data.validator.EmailValidator;
@@ -43,7 +44,8 @@ public class LaboruserActionForm extends VerticalLayout {
 
     private void setupContent() {
         //View settings
-        setSizeUndefined();
+        // setSizeUndefined();
+        setWidth(100, Unit.PERCENTAGE);
         setMargin(false);
         addComponents(formTitle, name, email, password, saveBtn);
         setComponentAlignment(formTitle, Alignment.TOP_CENTER);
@@ -51,7 +53,8 @@ public class LaboruserActionForm extends VerticalLayout {
         addAttachListener(event -> System.out.println("Form attached"));
 
         //Form title settings
-        formTitle.addStyleNames(ValoTheme.LABEL_BOLD);
+        formTitle.addStyleNames(ValoTheme.LABEL_H3, ValoTheme.TEXTAREA_ALIGN_CENTER);
+        formTitle.setWidth(100, Unit.PERCENTAGE);
 
         //Name field settings
         name.setPlaceholder("Felhasználó neve");
@@ -61,15 +64,18 @@ public class LaboruserActionForm extends VerticalLayout {
 
         //Email field settings
         email.setPlaceholder("Email cím");
+        email.setWidth(100, Unit.PERCENTAGE);
         dataBinder.forField(email).asRequired().withValidator(new EmailValidator("Ez nem valid email cím!"))
                 .bind(LaborUser::getEmail, LaborUser::setEmail);
 
         //Password field settings
         password.setPlaceholder("Jelszó");
+        password.setWidth(100, Unit.PERCENTAGE);
         dataBinder.forField(password).asRequired().bind(LaborUser::getPassword, LaborUser::setPassword);
 
         //Save btn settings
         saveBtn.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        saveBtn.setWidth(50, Unit.PERCENTAGE);
         saveBtn.addClickListener(e -> validateAndSaveLaboruser());
 
         setVisible(false);

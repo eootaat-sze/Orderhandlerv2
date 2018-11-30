@@ -2,6 +2,7 @@ package com.szbk.Orderhandlerv2.view.laborViews.OverviewComponents;
 
 import com.szbk.Orderhandlerv2.controller.OrderController;
 import com.szbk.Orderhandlerv2.model.Entity.CustomerOrder;
+import com.szbk.Orderhandlerv2.view.laborViews.OverviewComponents.Forms.OrderActionForm;
 import com.vaadin.data.HasValue.ValueChangeEvent;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -12,6 +13,8 @@ import com.vaadin.ui.themes.ValoTheme;
 
 public class CustomerOrderComponent extends HorizontalLayout {
     private OrderController orderController;
+    private OrderActionForm actionForm;
+
     private Grid<CustomerOrder> orderContentGrid;
     private VerticalLayout actionLayout;
     private Button addItemBtn;
@@ -20,15 +23,22 @@ public class CustomerOrderComponent extends HorizontalLayout {
         orderController = controller;
         orderContentGrid = new Grid<>(CustomerOrder.class);
         addItemBtn = new Button("Új elem hozzáadása");
-        actionLayout = new VerticalLayout(addItemBtn);
+        actionForm = new OrderActionForm(this, orderController);
+        actionLayout = new VerticalLayout(actionForm, addItemBtn);
 
         setupContent();
+    }
+
+    @Override
+    public void attach() {
+        super.attach();
+        actionForm.setVisible(false);
     }
 
     private void setupContent() {
         //View settings
         setSizeFull();
-        addComponents(orderContentGrid);
+        addComponents(orderContentGrid, actionLayout);
         setExpandRatio(orderContentGrid, 1);
 
         //Content grid settings
@@ -47,12 +57,14 @@ public class CustomerOrderComponent extends HorizontalLayout {
         orderContentGrid.getColumn("orderDate").setCaption("Megrendelés dátuma");
         orderContentGrid.getColumn("customerId").setCaption("Megrendelő azonosító");
         orderContentGrid.getColumn("customerInnerId").setCaption("Belső azonosító");
-        // orderContentGrid.asSingleSelect().addValueChangeListener(event -> selectRow(event));
+        orderContentGrid.asSingleSelect().addValueChangeListener(event -> selectRow(event));
         updateGrid();
 
         //Action layout settings
-        actionLayout.setSizeUndefined();
-        actionLayout.setComponentAlignment(addItemBtn, Alignment.TOP_CENTER);
+        actionLayout.setWidth(300, Unit.PIXELS);
+        actionLayout.setHeight(100, Unit.PERCENTAGE);
+        actionLayout.setMargin(false);
+        actionLayout.setComponentAlignment(addItemBtn, Alignment.BOTTOM_CENTER);
 
         //Add item btn settings
         addItemBtn.setStyleName(ValoTheme.BUTTON_PRIMARY);
@@ -65,14 +77,14 @@ public class CustomerOrderComponent extends HorizontalLayout {
 
 	private void newItemClick() {
         orderContentGrid.asSingleSelect().clear();
-        // actionForm.setUserToEdit(new CustomerOrder());
+        actionForm.setOrderToEdit(new CustomerOrder());
 	}
 
 	private void selectRow(ValueChangeEvent<CustomerOrder> event) {
 		if (event.getValue() == null) {
-            // actionForm.setVisible(false);
+            actionForm.setVisible(false);
         } else {
-            // actionForm.setUserToEdit(event.getValue());
+            actionForm.setOrderToEdit(event.getValue());
         }
 	}
 }

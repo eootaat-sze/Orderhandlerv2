@@ -1,17 +1,17 @@
 package com.szbk.Orderhandlerv2.view.laborViews.OverviewComponents;
 
 import com.szbk.Orderhandlerv2.controller.OrderTypeController;
-import com.szbk.Orderhandlerv2.model.Entity.Type;
+import com.szbk.Orderhandlerv2.model.Entity.OrderType;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 
 public class OrderTypeComponent extends HorizontalLayout {
     private OrderTypeController typeController;
-    private Grid<Type> typeContentGrid;
+    private Grid<OrderType> typeContentGrid;
 
     public OrderTypeComponent(OrderTypeController typeController) {
         this.typeController = typeController;
-        typeContentGrid = new Grid<>(Type.class);
+        typeContentGrid = new Grid<>(OrderType.class);
 
         setupContent();
     }

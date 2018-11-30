@@ -9,6 +9,7 @@ import com.szbk.Orderhandlerv2.helpers.labor.CreateDownloadFileForSettlementPage
 import com.szbk.Orderhandlerv2.model.Entity.Customer;
 import com.szbk.Orderhandlerv2.model.Entity.CustomerOrder;
 import com.vaadin.data.HasValue.ValueChangeEvent;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FileDownloader;
@@ -122,6 +123,7 @@ public class SettlementView extends VerticalLayout implements View {
 
         //Download btn settings
         downloadBtn.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        downloadBtn.setIcon(VaadinIcons.DOWNLOAD_ALT);
         downloadBtn.setEnabled(false);
 
     }
@@ -151,7 +153,7 @@ public class SettlementView extends VerticalLayout implements View {
         
         if (selectedCustomerName != null) {
             Customer c = customerController.getCustomerByCompanyNameAndGroupNameAndCustomerName(selectedCompanyName, selectedGroupName, selectedCustomerName);
-            filteredOrders = orderController.getAllOrdersByCustomerId(c.getId());
+            filteredOrders = orderController.filterOrdersByCustomerIdAndStatus(c.getId(), "Átadott");
             filteredOrdersGrid.setItems(filteredOrders);
 
             if (filteredOrders.isEmpty()) {

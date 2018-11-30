@@ -45,6 +45,7 @@ public class AllOrdersView extends VerticalLayout implements View {
     private Button createJobBtn;
     private CssLayout filteringLayout;
     private TextField sequenceEditField;
+    private ComboBox<String> editStatus;
 
     private Binder<CustomerOrder> dataBinder;
     private MultiSelect<CustomerOrder> multiSelectOnGrid;
@@ -70,6 +71,7 @@ public class AllOrdersView extends VerticalLayout implements View {
         createJobBtn = new Button("Job létrehozása a kiválasztott elemekből");
         filteringLayout = new CssLayout(filterByStatus, clearFilterBtn);
         sequenceEditField = new TextField();
+        editStatus = new ComboBox<>();
         dataBinder = ordersGrid.getEditor().getBinder();
         createJob = new JobCreation(customerController);
     }
@@ -111,6 +113,10 @@ public class AllOrdersView extends VerticalLayout implements View {
         clearFilterBtn.setIcon(VaadinIcons.CLOSE);
         clearFilterBtn.addClickListener(e -> filterByStatus.clear());
 
+        //Edit status box settings.
+        editStatus.setEmptySelectionAllowed(false);
+        editStatus.setItems(orderStatusController.getAllStatusNames());
+
         //Orders grid settings.
         ordersGrid.setSizeFull();
         ordersGrid.setColumns("sequenceName", "sequence", "editedSequence", "scale", "purification", "type", "status", "orderDate");
@@ -127,9 +133,14 @@ public class AllOrdersView extends VerticalLayout implements View {
         ordersGrid.getColumn("type").setCaption("Szekvencia típusa");
         ordersGrid.getColumn("status").setCaption("Rendelés státusza");
         ordersGrid.getColumn("orderDate").setCaption("Rendelés dátuma");
+
+        //Add editor component to a field.
         dataBinder.forField(sequenceEditField).asRequired("A szekvencia mező nem lehet üres!")
                 .bind(CustomerOrder::getEditedSequence, CustomerOrder::setEditedSequence);
         ordersGrid.getColumn("editedSequence").setEditorComponent(sequenceEditField);
+        dataBinder.forField(editStatus).bind(CustomerOrder::getStatus, CustomerOrder::setStatus);
+        ordersGrid.getColumn("status").setEditorComponent(editStatus);
+
         ordersGrid.getEditor().addSaveListener(e -> {
             validateAndSaveSequenceString(e.getBean());
             
@@ -152,7 +163,8 @@ public class AllOrdersView extends VerticalLayout implements View {
 
         //Job btn settings.
         createJobBtn.setEnabled(false);
-//        createJobBtn.setStyleName(ValoTheme.BUTTON_PRIMARY);
+        createJobBtn.setIcon(VaadinIcons.DOWNLOAD_ALT);
+        createJobBtn.setStyleName(ValoTheme.BUTTON_PRIMARY);
 //        createJobBtn.setEnabled(false);
 //        fileToDownload = createJob.createResourceForDownload();
 //        createJobBtn.addClickListener(e -> saveChangesOnOrders());
@@ -171,7 +183,7 @@ public class AllOrdersView extends VerticalLayout implements View {
 	private void saveChangesOnOrders(Set<CustomerOrder> selectedItems) {
         createJobBtn.setEnabled(false);
         multiSelectOnGrid.clear();
-        orderController.changeStatusOnOrders(selectedItems, "Folyamatban");
+        orderController.changeStatusOnOrders(selectedItems, "Szintézis alatt");
     }
     
     //After editing the sequence this method will be called for validation and saving the edit if it's valid.

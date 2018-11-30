@@ -61,15 +61,11 @@ public class CustomerController {
     }
 
     public boolean registration(Customer customer) {
-        createInnerNameToCustomer(customer);
-        //Save the number of rows in the database.
-        long count = repo.count();
+        if (customer.getInnerName() == null) {
+            createInnerNameToCustomer(customer);
+        }
 
-        System.out.println("Customer to save: " + customer);
-        repo.save(customer);
-
-        //If the current row number is bigger than the previous, the insert was successful.
-        return repo.count() > count;
+        return repo.save(customer) != null;
     }
 
     private void createInnerNameToCustomer(Customer customer) {

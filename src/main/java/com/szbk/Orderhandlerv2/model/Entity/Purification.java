@@ -1,11 +1,9 @@
 package com.szbk.Orderhandlerv2.model.Entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
+@Table(name = "purification")
 public class Purification {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

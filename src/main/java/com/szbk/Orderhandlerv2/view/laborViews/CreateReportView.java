@@ -128,6 +128,7 @@ public class CreateReportView extends VerticalLayout implements View {
 
         //Export btn settings.
         exportFileBtn.setStyleName(ValoTheme.BUTTON_PRIMARY);
+        exportFileBtn.setIcon(VaadinIcons.DOWNLOAD_ALT);
         exportFileBtn.setEnabled(false);
     }
 
@@ -154,7 +155,7 @@ public class CreateReportView extends VerticalLayout implements View {
         String[] selectedItem = filterByCustomer.getValue().split(":");
         long customerId = Long.parseLong(selectedItem[0]);
         System.out.println("customerId[report]: " + customerId);
-        List<CustomerOrder> ordersForCustomer = orderController.getAllOrdersByCustomerId(customerId);
+        List<CustomerOrder> ordersForCustomer = orderController.filterOrdersByCustomerIdAndStatus(customerId, "Elkészült");
         ordersForCustomerGrid.setItems(ordersForCustomer);
     }
 }

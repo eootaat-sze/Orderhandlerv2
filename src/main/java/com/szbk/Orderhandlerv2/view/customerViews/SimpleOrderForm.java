@@ -56,7 +56,7 @@ public class SimpleOrderForm extends FormLayout {
         //Main settings.
         setSizeUndefined();
 
-        //Type settings.
+        //OrderType settings.
         type.setPlaceholder("Szekvencia típusa");
         type.focus();
         type.setEmptySelectionAllowed(false);
@@ -82,7 +82,7 @@ public class SimpleOrderForm extends FormLayout {
         //Scale settings.
         scale.setPlaceholder("Scale (nmol)");
         dataBinder.forField(scale).asRequired(REQUIRED_FIELD)
-                .withConverter(new StringToIntegerConverter("A megadott érték nem egész szám"))
+                .withConverter(new StringToIntegerConverter("A megadott érték nem egész szám!"))
                 .bind(CustomerOrder::getScale, CustomerOrder::setScale);
 
         //Purification settings.
@@ -127,6 +127,7 @@ public class SimpleOrderForm extends FormLayout {
         if (success) {
             orderToEdit.setCustomerId(Long.parseLong(String.valueOf(VaadinSession.getCurrent()
                     .getAttribute("id"))));
+            orderToEdit.setCustomerName(String.valueOf(VaadinSession.getCurrent().getAttribute("customerName")));
             orderToEdit.setOrderDate(LocalDate.now());
             addOrderView.addOrderToTheGrid(orderToEdit);
             setVisible(false);

@@ -2,6 +2,7 @@ package com.szbk.Orderhandlerv2.view.laborViews.OverviewComponents;
 
 import com.szbk.Orderhandlerv2.controller.LaborUserController;
 import com.szbk.Orderhandlerv2.model.Entity.LaborUser;
+import com.szbk.Orderhandlerv2.view.laborViews.OverviewComponents.Forms.LaboruserActionForm;
 import com.vaadin.data.HasValue.ValueChangeEvent;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -13,7 +14,6 @@ import com.vaadin.ui.themes.ValoTheme;
 public class LaboruserComponent extends HorizontalLayout {
     private LaborUserController laborController;
     private LaboruserActionForm actionForm;
-
     private Grid<LaborUser> laborContentGrid;
     private VerticalLayout actionLayout;
     private Button addItemBtn;
@@ -23,9 +23,17 @@ public class LaboruserComponent extends HorizontalLayout {
         actionForm = new LaboruserActionForm(this, laborController);
         laborContentGrid = new Grid<>(LaborUser.class);
         addItemBtn = new Button("Új elem hozzáadása");
-        actionLayout = new VerticalLayout(addItemBtn, actionForm);
+        actionLayout = new VerticalLayout(actionForm, addItemBtn);
 
         setupContent();
+    }
+
+    @Override
+    public void attach() {
+        super.attach();
+
+        setupContent();
+        System.out.println("setupcontent[laborusercomponent] called");
     }
 
     private void setupContent() {
@@ -44,8 +52,10 @@ public class LaboruserComponent extends HorizontalLayout {
         updateGrid();
 
         //Action layout settings
-        actionLayout.setSizeUndefined();
-        actionLayout.setComponentAlignment(addItemBtn, Alignment.TOP_CENTER);
+        actionLayout.setHeight(100, Unit.PERCENTAGE);
+        actionLayout.setComponentAlignment(addItemBtn, Alignment.BOTTOM_CENTER);
+        actionLayout.setMargin(false);
+        actionLayout.setWidth(300, Unit.PIXELS);
 
         //Add item btn settings
         addItemBtn.setStyleName(ValoTheme.BUTTON_PRIMARY);

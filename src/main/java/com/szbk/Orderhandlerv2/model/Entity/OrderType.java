@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "ordertype")
-public class Type {
+public class OrderType {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
@@ -12,9 +12,9 @@ public class Type {
     private String name;
     private int price;
 
-    public Type() {}
+    public OrderType() {}
 
-    public Type(String name, int price) {
+    public OrderType(String name, int price) {
         this.name = name;
         this.price = price;
     }

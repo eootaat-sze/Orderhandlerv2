@@ -4,6 +4,7 @@ package com.szbk.Orderhandlerv2.model.Entity;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "customer")
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

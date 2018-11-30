@@ -78,6 +78,7 @@ public class RegistrationView extends VerticalLayout implements View {
         password2Field.setPlaceholder("Jelszó megint");
         password2Field.setDescription("Adja meg a jelszavát megint!");
         password2Field.setWidth(100, Unit.PERCENTAGE);
+        dataBinder.forField(password2Field).asRequired(REQUIRED_FIELD);
 
         //Email field settings.
         emailField.setPlaceholder("Email address");
@@ -95,11 +96,10 @@ public class RegistrationView extends VerticalLayout implements View {
                 .bind(Customer::getGroupName, Customer::setGroupName);
 
         //Companyname field settings.
-        companyNameField.setPlaceholder("Cégnév");
+        companyNameField.setPlaceholder("Cégnév (default: SZBK)");
         companyNameField.setDescription("Adja meg a cég nevét!");
         companyNameField.setWidth(100, Unit.PERCENTAGE);
-        dataBinder.forField(companyNameField).asRequired(REQUIRED_FIELD)
-                .bind(Customer::getCompanyName, Customer::setCompanyName);
+        dataBinder.forField(companyNameField).bind(Customer::getCompanyName, Customer::setCompanyName);
 
         //Registration button settings.
         registrationBtn.setDescription("Erre a gombra klikkelve regisztrálhat a rendszerbe.");
@@ -141,7 +141,8 @@ public class RegistrationView extends VerticalLayout implements View {
             if (checkEmail()) {
                 try {
                     dataBinder.writeBean(customer);
-                    System.out.println("Customer bean: " + customer);
+                    // System.out.println("Customer bean: " + customer);
+                    setCompanyNameForCustomer(customer);
                 } catch (ValidationException e) {
                     Notification errorMessage = new Notification("Ellenőrizze a hibaüzeneteket az egyes mezők mellett!");
                     errorMessage.setStyleName(ValoTheme.NOTIFICATION_ERROR);
@@ -185,5 +186,13 @@ public class RegistrationView extends VerticalLayout implements View {
     private boolean checkEmail() {
         String emailAddress = emailField.getValue();
         return customerController.getCustomerByEmail(emailAddress) == null;
+    }
+
+    private void setCompanyNameForCustomer(Customer customer) {
+        if (customer.getCompanyName().equals("")) {
+            String companyName = companyNameField.getPlaceholder().split(":")[1];
+            companyName = companyName.replace(")", " ").trim();
+            customer.setCompanyName(companyName);
+        }
     }
 }

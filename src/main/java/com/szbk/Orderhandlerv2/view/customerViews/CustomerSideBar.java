@@ -52,8 +52,10 @@ public class CustomerSideBar extends CssLayout implements View {
         logoutBtn.setIcon(VaadinIcons.EXIT);
         logoutBtn.addClickListener(e -> {
 //            getUI().getPage().reload();
-            VaadinSession.getCurrent().setAttribute("role", "none");
+            VaadinSession.getCurrent().setAttribute("role", null);
             getUI().getNavigator().navigateTo("");
+            // VaadinSession.getCurrent().close();
+            // getUI().getPage().setLocation("localhost:8080");
         });
 
         addComponents(menuTitle, addOrderBtn, listOrdersBtn, logoutBtn);
@@ -62,7 +64,9 @@ public class CustomerSideBar extends CssLayout implements View {
 
     @Override
     public void enter(ViewChangeEvent event) {
-        if ((VaadinSession.getCurrent().getAttribute("role") == null) || (!VaadinSession.getCurrent().getAttribute("role").equals("customer"))) {
+        String role = String.valueOf(VaadinSession.getCurrent().getAttribute("role"));
+        System.out.println("customer_role: " + role);
+        if (role == null || !role.equals("customer")) {
             getUI().getNavigator().navigateTo("");
             System.out.println("No session");
         }
